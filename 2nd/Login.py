@@ -1,5 +1,5 @@
 import json
-import subprocess
+import Router
 from tkinter import messagebox
 
 import Connect
@@ -30,7 +30,7 @@ def login(emp_id, password, root):
         root.withdraw()
 
         # 새로운 프로세스 실행("Popen")
-        subprocess.Popen(["python", "t2.py"])
+        Router.run_t2(root)
 
     else:
 
