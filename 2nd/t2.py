@@ -1,6 +1,9 @@
 import tkinter as tk
 import json
 
+import Router
+import Logout
+
 # CurrentUser.json 파일에서 사용자 정보 불러오기
 with open("CurrentUser.json", "r", encoding="utf-8") as f:
     current_user = json.load(f)
@@ -29,13 +32,13 @@ seperator.pack(side="left", fill="y", padx=5, pady=10)
 # 프레임2
 frame2 = tk.Frame(root, padx=30, pady=10, width=250, height=250)
 frame2.pack(side="right", anchor="ne")
-button1 = tk.Button(frame2, text="학생관리", width=20, height=1)
+button1 = tk.Button(frame2, text="학생관리", width=20, height=1, command=lambda: Router.run_t3(root))
 button1.pack(side="top", padx=10, pady=10, ipady=2)
-button2 = tk.Button(frame2, text="암호변경", width=20, height=1)
+button2 = tk.Button(frame2, text="암호변경", width=20, height=1, command=lambda: Router.run_t4(root))
 button2.pack(side="top", padx=10, pady=10, ipady=2)
-button3 = tk.Button(frame2, text="로그아웃", width=20, height=1)
+button3 = tk.Button(frame2, text="로그아웃", width=20, height=1, command=lambda: Logout.logout(root))
 button3.pack(side="top", padx=10, pady=10, ipady=2)
-button4 = tk.Button(frame2, text="종료", width=20, height=1)
+button4 = tk.Button(frame2, text="종료", width=20, height=1, command=root.quit)
 button4.pack(side="top", padx=10, pady=10, ipady=2)
 
 root.mainloop()
