@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import Connect
+from Query import searchStudentInfo
 
 db_connection = Connect.connect_to_mysql()
 cursor = db_connection.cursor()
@@ -33,13 +34,12 @@ label3 = tk.Label(frame1, text="이름", width=5, height=1)
 label3.pack(side="left")
 entry3 = tk.Entry(frame1, width=10)
 entry3.pack(side="left", padx=10)
-button1 = tk.Button(frame1, text="검색", width=10)
+button1 = tk.Button(frame1, text="검색", width=10, command= lambda: searchStudentInfo(combo1.get(), entry2.get(), entry3.get(), tree))
 button1.pack(side="left", padx=10)
 
 # 구분선
 seperating1 = tk.Frame(root, height=2, bg="gray")
 seperating1.pack(side="top", fill="x")
-
 
 # 프레임2 : 테이블(트리뷰) 부분
 frame2 = tk.Frame(root, width=500)
