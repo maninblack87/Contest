@@ -42,8 +42,8 @@ seperating1 = tk.Frame(root, height=2, bg="gray")
 seperating1.pack(side="top", fill="x")
 
 # 프레임2 : 테이블(트리뷰) 부분
-frame2 = tk.Frame(root, width=500)
-frame2.pack(side="left", fill="both", padx=20, pady=10)
+frame2 = tk.Frame(root, width=500, bg="green")
+frame2.pack(side="left", fill="y", padx=20, pady=10)
 # 테이블
 tree = ttk.Treeview(frame2, columns=("이름", "학번", "학과", "상태"), show="headings")
 tree.heading("이름", text="이름")
@@ -59,11 +59,47 @@ tree.column("상태", width=60)
 scrollbar = ttk.Scrollbar(frame2, orient="vertical", command=tree.yview)
 tree.configure(yscrollcommand=scrollbar.set)
 # 테이블 배치
-tree.pack(side="left", fill="both", expand=True)
+tree.pack(side="left", fill="both")
 scrollbar.pack(side="right", fill="y")
 
 # 프레임3 : 입력부
 frame3 = tk.Frame(root, width=500)
-frame3.pack(side="right", fill="both")
+frame3.pack(side="left", fill="both", padx=10, pady=20)
+# >> 프레임3-1
+frame3_1 = tk.Frame(frame3, pady=10)
+frame3_1.pack(side="top", anchor="w")
+label4 = tk.Label(frame3_1, text="학번", width=5)
+label4.pack(side="left")
+entry4 = tk.Entry(frame3_1, width=12)
+entry4.pack(side="left", padx=20)
+label5 = tk.Label(frame3_1, text="이름", width=5)
+label5.pack(side="left")
+entry5 = tk.Entry(frame3_1, width=12)
+entry5.pack(side="left")
+# >> 프레임3-2
+frame3_2 = tk.Frame(frame3, pady=10)
+frame3_2.pack(side="top", anchor="w")
+label6 = tk.Label(frame3_2, text="이메일", width=5)
+label6.pack(side="left")
+entry6 = tk.Entry(frame3_2, width=32)
+entry6.pack(side="left")
+# >> 프레임3-3
+# >> >> 학과 명칭 조회 쿼리
+query = "SELECT 명칭 FROM 학과정보"
+cursor.execute(query)
+majors = [row[0] for row in cursor.fetchall()]
+majors.insert(0, "선택")
+frame3_3 = tk.Frame(frame3, pady=10)
+frame3_3.pack(side="top", anchor="w")
+label7 = tk.Label(frame3_3, text="학과", width=5)
+label7.pack(side="left")
+combo7 = ttk.Combobox(frame3_3, value=majors, state="readonly", width=15)
+combo7.pack(side="left")
+label8 = tk.Label(frame3_3, text="상태")
+label8.pack(side="left")
+# >> >> 학생 상태 조회 쿼리
+status = ["재학", "졸업", "휴학", "퇴학"]
+combo8 = ttk.Combobox(frame3_3, values=status, state="readonly", width=8)
+combo8.pack(side="left")
 
 root.mainloop()

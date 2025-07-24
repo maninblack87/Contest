@@ -32,6 +32,7 @@ def searchStudentInfo(major, std_id, name, tree):
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
     query += " ORDER BY A.학번"
+    print(query)
 
     # 쿼리를 실행해서 데이터 생성
     cursor.execute(query, values)
