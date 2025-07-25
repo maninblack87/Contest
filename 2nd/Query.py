@@ -1,4 +1,7 @@
 # Query.py
+import tkinter as tk
+from tkinter import ttk
+
 import Connect
 
 # 학생정보 테이블 검색 함수
@@ -22,17 +25,16 @@ def searchStudentInfo(major, std_id, name, tree):
     # 입력한 조건에 따라 학생정보를 조회하는 쿼리로 수정
     if major != "전체":
         conditions.append("B.명칭 LIKE %s")
-        values.append(f"%{major}")
+        values.append(f"%{major}%")
     if std_id:
         conditions.append("A.학번 LIKE %s")
-        values.append(f"%{std_id}")
+        values.append(f"%{std_id}%")
     if name:
         conditions.append("A.이름 LIKE %s")
-        values.append(f"%{name}")
+        values.append(f"%{name}%")
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
     query += " ORDER BY A.학번"
-    print(query)
 
     # 쿼리를 실행해서 데이터 생성
     cursor.execute(query, values)
@@ -45,3 +47,22 @@ def searchStudentInfo(major, std_id, name, tree):
     # 현재 생성된 데이터를 트리에 추가
     for row in rows:
         tree.insert("", "end", values=(row[0], row[1], row[2], row[3]))
+
+
+# 추가버튼 클릭 함수
+def click_add_button(combo1:ttk.Combobox, ent2:tk.Entry, ent3:tk.Entry, ent4:tk.Entry, ent5:tk.Entry, ent6:tk.Entry, combo7:ttk.Combobox, combo8:ttk.Combobox):
+
+    # 입력창 활성화
+    ent4.config(state="normal")
+    ent5.config(state="normal")
+    ent6.config(state="normal")
+
+    # 입력창 텍스트 공백화(초기화)
+    combo1.current(0)
+    ent2.delete(0, tk.END)
+    ent3.delete(0, tk.END)
+    ent4.delete(0, tk.END)
+    ent5.delete(0, tk.END)
+    ent6.delete(0, tk.END)
+    combo7.current(0)
+    combo8.current(0)

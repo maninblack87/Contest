@@ -3,7 +3,7 @@ from tkinter import ttk
 import json
 
 import Connect
-from Query import searchStudentInfo
+from Query import searchStudentInfo, click_add_button
 from Event import on_tree_select
 
 # 데이터베이스 연결 및 (쿼리를 전송할) 커서 생성
@@ -118,7 +118,7 @@ combo8.pack(side="left")
 frame3_4 = tk.Frame(frame3, pady=10)
 frame3_4.pack(side="bottom", anchor="w")
 # >> >> 추가 버튼
-add_btn = tk.Button(frame3_4, text="추가")
+add_btn = tk.Button(frame3_4, text="추가", command=lambda: click_add_button(combo1, entry2, entry3, entry4, entry5, entry6, combo7, combo8))
 add_btn.pack(side="left")
 # >> >> 저장 버튼
 save_btn = tk.Button(frame3_4, text="저장")

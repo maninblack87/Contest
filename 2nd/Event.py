@@ -6,6 +6,8 @@ import Connect
 
 def on_tree_select(tree, std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox, current_user, delete_button:tk.Button):
     """
+    tree(ttk.Treeview)에서 학생 항목을 선택하면 해당 학생의 정보를 우측 입력란에 표시하는 함수
+
     tree : Treeview에 의해 만틀어진 뷰
     std_id,name,email,major,state : 학생의 데이터들의 입력칸
     current_user : CurrentUser.json으로부터 불러온 사용자 정보
@@ -59,15 +61,9 @@ def on_tree_select(tree, std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:t
     email.insert(0, selected_std_info[2])
     email.config(state="disabled")
     # 4) 학과(명칭)
-    major.config(state="normal")
-    major.delete(0, tk.END)
-    major.insert(0, selected_std_info[3])
-    major.config(state="disabled")
+    major.set(selected_std_info[3])
     # 5) 상태
-    state.config(state="normal")
-    state.delete(0, tk.END)
-    state.insert(0, selected_std_info[4])
-    state.config(state="disabled")
+    state.set(selected_std_info[4])
 
     # 사용자의 권한 정보에 따라 권한 부여/제한
     # 사용자 권한이 USER
