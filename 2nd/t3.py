@@ -5,6 +5,7 @@ import json
 import Connect
 from Query import searchStudentInfo, click_add_button
 from Event import on_tree_select
+from Logout import logout
 
 # 데이터베이스 연결 및 (쿼리를 전송할) 커서 생성
 db_connection = Connect.connect_to_mysql()
@@ -71,28 +72,31 @@ scrollbar.pack(side="right", fill="y")
 
 # 프레임3 : 입력부
 frame3 = tk.Frame(root, width=500)
-frame3.pack(side="left", fill="both", padx=10, pady=20)
+frame3.pack(side="left", fill="both", pady=20)
+
 # >> 프레임3-1
 frame3_1 = tk.Frame(frame3, pady=10)
 frame3_1.pack(side="top", anchor="w")
 # >> >> 학번
-label4 = tk.Label(frame3_1, text="학번", width=5)
+label4 = tk.Label(frame3_1, text="학번", width=5, padx=5)
 label4.pack(side="left")
 entry4 = tk.Entry(frame3_1, width=12)
-entry4.pack(side="left", padx=20)
+entry4.pack(side="left")
 # >> >> 이름
-label5 = tk.Label(frame3_1, text="이름", width=5)
+label5 = tk.Label(frame3_1, text="이름", width=5, padx=5)
 label5.pack(side="left")
-entry5 = tk.Entry(frame3_1, width=12)
+entry5 = tk.Entry(frame3_1, width=13)
 entry5.pack(side="left")
+
 # >> 프레임3-2
 frame3_2 = tk.Frame(frame3, pady=10)
 frame3_2.pack(side="top", anchor="w")
 # >> >> 이메일
-label6 = tk.Label(frame3_2, text="이메일", width=5)
+label6 = tk.Label(frame3_2, text="이메일", width=5, padx=5)
 label6.pack(side="left")
 entry6 = tk.Entry(frame3_2, width=32)
 entry6.pack(side="left")
+
 # >> 프레임3-3
 # >> >> 학과 명칭 조회 쿼리
 query = "SELECT 명칭 FROM 학과정보"
@@ -102,30 +106,40 @@ majors.insert(0, "선택")
 frame3_3 = tk.Frame(frame3, pady=10)
 frame3_3.pack(side="top", anchor="w")
 # >> >> 학과
-label7 = tk.Label(frame3_3, text="학과", width=5)
+label7 = tk.Label(frame3_3, text="학과", width=5, padx=5)
 label7.pack(side="left")
-combo7 = ttk.Combobox(frame3_3, value=majors, state="readonly", width=15)
+combo7 = ttk.Combobox(frame3_3, value=majors, state="readonly", width=14)
 combo7.pack(side="left")
 # >> >> 상태
-label8 = tk.Label(frame3_3, text="상태")
+label8 = tk.Label(frame3_3, text="상태", padx=5)
 label8.pack(side="left")
 # >> >> >> 학생 상태 조회 쿼리
 status = ["재학", "졸업", "휴학", "퇴학"]
-combo8 = ttk.Combobox(frame3_3, values=status, state="readonly", width=8)
+combo8 = ttk.Combobox(frame3_3, values=status, state="readonly", width=7)
 combo8.pack(side="left")
 
 # >> 프레임 3-4
 frame3_4 = tk.Frame(frame3, pady=10)
 frame3_4.pack(side="bottom", anchor="w")
+# >> 프레임 3-4 : 그리드 레이아웃
+frame3_4.columnconfigure(0, weight=100)
+frame3_4.columnconfigure(1, weight=100)
+frame3_4.columnconfigure(2, weight=100)
 # >> >> 추가 버튼
-add_btn = tk.Button(frame3_4, text="추가", command=lambda: click_add_button(combo1, entry2, entry3, entry4, entry5, entry6, combo7, combo8))
-add_btn.pack(side="left")
+add_btn = tk.Button(frame3_4, text="추가", width=10, command=lambda: click_add_button(combo1, entry2, entry3, entry4, entry5, entry6, combo7, combo8))
+add_btn.grid(row=0, column=0, padx=10, pady=5, ipady=5)
 # >> >> 저장 버튼
-save_btn = tk.Button(frame3_4, text="저장")
-save_btn.pack(side="left")
+save_btn = tk.Button(frame3_4, text="저장", width=10, )
+save_btn.grid(row=0, column=1, padx=10, pady=5, ipady=5)
 # >> >> 삭제 버튼
-delete_btn = tk.Button(frame3_4, text="삭제")
-delete_btn.pack(side="left")
+delete_btn = tk.Button(frame3_4, text="삭제", width=10)
+delete_btn.grid(row=0, column=2, padx=10, pady=5, ipady=5)
+# >> >> 로그아웃 버튼
+logout_btn = tk.Button(frame3_4, text="로그아웃", width=10, command=lambda: logout(root))
+logout_btn.grid(row=1, column=0, padx=10, pady=5, ipady=5)
+# >> >> 메인화면 버튼
+go_main_btn = tk.Button(frame3_4, text="메인화면", width=24)
+go_main_btn.grid(row=1, column=1, columnspan=2, padx=10, pady=5, ipady=5)
 
 # 권한에 따른 권한 부여/제한
 # >> 사용자가 USER일 경우

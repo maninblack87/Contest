@@ -66,3 +66,17 @@ def click_add_button(combo1:ttk.Combobox, ent2:tk.Entry, ent3:tk.Entry, ent4:tk.
     ent6.delete(0, tk.END)
     combo7.current(0)
     combo8.current(0)
+
+
+# 저장버튼 클릭 함수
+def click_save_button(std_id:tk.Entry):
+
+    # 데이터베이스 연결
+    db_connection = Connect.connect_to_mysql()
+    # 커서 생성
+    cursor = db_connection.cursor()
+
+    # 추가 or 수정 여부 확인
+    query1 = "SELECT COUNT(*) FROM 학생정보 WHERE %s = 학번"
+    cursor.execute(query1, (std_id,))
+    is_exist_std = cursor.fetchone()
