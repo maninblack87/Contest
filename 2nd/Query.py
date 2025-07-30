@@ -1,6 +1,7 @@
 # Query.py
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 import Connect
 
@@ -69,7 +70,7 @@ def click_add_button(combo1:ttk.Combobox, ent2:tk.Entry, ent3:tk.Entry, ent4:tk.
 
 
 # 저장버튼 클릭 함수
-def click_save_button(std_id:tk.Entry):
+def click_save_button(std_id:tk.Entry, tree:ttk.Treeview):
 
     # 데이터베이스 연결
     db_connection = Connect.connect_to_mysql()
@@ -80,3 +81,16 @@ def click_save_button(std_id:tk.Entry):
     query1 = "SELECT COUNT(*) FROM 학생정보 WHERE %s = 학번"
     cursor.execute(query1, (std_id,))
     is_exist_std = cursor.fetchone()
+
+    # 해당 여부에 따라 행 수정 or 추가
+    if is_exist_std[0] > 0:
+        messagebox.showinfo("modify()함수가 없음", "해당 함수를 제작하는대로 호출되도록 할 예정")
+    else:
+        messagebox.showinfo("add()함수가 없음", "해당 함수를 제작하는대로 호출되도록 할 예정")
+
+    # 학생목록 비우기
+    for item in tree.get_children():
+        tree.delete(item)
+
+    # 수정 or 추가 후, 입력란 모두 비우기
+    
