@@ -4,6 +4,7 @@ from tkinter import messagebox
 import Connect
 from CheckAllowedAddCondition import check_allowed_add_condition
 
+
 # 추가 버튼 클릭시
 def on_click_add(entry1, entry2, entry3, entry4, entry5, combo2, combo3):
 
