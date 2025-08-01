@@ -73,11 +73,11 @@ def click_add_button(combo1:ttk.Combobox, ent2:tk.Entry, ent3:tk.Entry, ent4:tk.
 # 저장버튼 클릭 함수
 def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox, tree:ttk.Treeview):
 
-    # 1. 데이터베이스 연결, 커서 생성
+    # 데이터베이스 연결, 커서 생성
     db_connection = Connect.connect_to_mysql()
     cursor = db_connection.cursor()
 
-    # 2. 모든 제약조건을 체크하고 학생 정보 추가 수행
+    # 모든 제약조건을 체크하고 학생 정보 추가 수행
     if check_for_save(std_id.get(), name.get(), email.get(), major.get(), state.get()):
 
         # 입력된 학과 명칭을 학생정보 테이블의 학과 번호로 변환
@@ -123,11 +123,11 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
         messagebox.showerror("학생 정보 추가/수정 오류", "비정상적인 값")
 
 
-    # 3. 학생목록 비우기
+    # 학생목록 비우기
     for item in tree.get_children():
         tree.delete(item)
 
-    # 4. 수정 or 추가 후, 입력란 모두 비우기
+    # 수정 or 추가 후, 입력란 모두 비우기
     std_id.config("normal")
     std_id.delete(0, tk.END)
     std_id.config(state="disabled")
@@ -142,7 +142,7 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
 
     state.set("")
 
-    # 5. 데이터베이스 연결 종료
+    # 데이터베이스 연결 종료
     db_connection.close()
 
 
@@ -183,11 +183,13 @@ def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:tt
 
 
 # 추가/수정 전 제약조건 설정 함수
-def check_for_save(std_id:str, name:str, email:str, major:str, state:str):
+def check_for_save(std_id:str, name:str, email:str, major:str, state:str, is_modify:bool):
 
     # >> 조건 - 학번 1 : 학번은 5자리 숫자
-    check_id1 = re.fullmatch(r'\d{5}', std_id)
+    if not re.fullmatch(r'\d{5}', std_id):
+        return False
 
+    # >>>>>> #### 작업 중 ######<<<<<
     # >> 조건 - 학번 2 : (데이터베이스에 있는) 기존 학번과 중복 금지
     connection = Connect.connect_to_mysql()     # 데이터베이스 연결
     cursor = connection.cursor()                # 커서 생성
@@ -197,7 +199,7 @@ def check_for_save(std_id:str, name:str, email:str, major:str, state:str):
     existing_ids = {str(row[0]) for row in result}  # 리스트화
     connection.close()                          # 커넥션 종료
 
-    check_id2 = std_id not in existing_ids
+    check_id2 = std_id not in existing_ids if not is_modify else True
 
     # >> 조건 - 이름 : 최소 2글자 이상
     check_name = len(name) >= 2
@@ -211,6 +213,7 @@ def check_for_save(std_id:str, name:str, email:str, major:str, state:str):
     # >> 조건 - 상태 : (추가할 때 상태는 항상) "재학"만 선택되어있어야 함
     check_state = state == "재학"
 
+    # 결과 반환
     if check_id1 and check_id2 and check_name and check_email and check_major and check_state:
         return True
     else:
