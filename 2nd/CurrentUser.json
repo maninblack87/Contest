@@ -1,6 +1,6 @@
 {
-    "id": "",
-    "name": "",
-    "role": "",
-    "password": ""
+    "id": "12341234",
+    "name": "관리자",
+    "role": "admin",
+    "password": "12341234"
 }

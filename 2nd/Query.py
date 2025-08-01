@@ -73,27 +73,61 @@ def click_add_button(combo1:ttk.Combobox, ent2:tk.Entry, ent3:tk.Entry, ent4:tk.
 # 저장버튼 클릭 함수
 def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox, tree:ttk.Treeview):
 
-    # 데이터베이스 연결
+    # 1. 데이터베이스 연결, 커서 생성
     db_connection = Connect.connect_to_mysql()
-    # 커서 생성
     cursor = db_connection.cursor()
 
-    # 추가 or 수정 여부 확인
-    query1 = "SELECT COUNT(*) FROM 학생정보 WHERE %s = 학번"
-    cursor.execute(query1, (std_id,))
-    is_exist_std = cursor.fetchone()
+    # 2. 모든 제약조건을 체크하고 학생 정보 추가 수행
+    if check_for_save(std_id.get(), name.get(), email.get(), major.get(), state.get()):
 
-    # 해당 여부에 따라 행 수정 or 추가
-    if is_exist_std[0] > 0:
-        messagebox.showinfo("modify()함수가 없음", "해당 함수를 제작하는대로 호출되도록 할 예정")
+        # 입력된 학과 명칭을 학생정보 테이블의 학과 번호로 변환
+        query1 = """
+            SELECT 학과코드 
+            FROM 학과정보
+            WHERE 명칭 = %s
+            """
+        cursor.execute(query1, (major.get(),))
+        result = cursor.fetchone()
+        major_code = result[0]
+
+        # 추가 or 수정 여부 확인
+        query1 = "SELECT COUNT(*) FROM 학생정보 WHERE %s = 학번"
+        cursor.execute(query1, (std_id.get(),))
+        result = cursor.fetchone()
+        existing_id = result[0]
+
+        # 추가/수정 여부에 따라 SQL문 생성->실행->결과도출
+        if existing_id > 0:
+            query2 = """
+                UPDATE 학생정보
+                SET 학번 = %s, 이름 = %s, 이메일 = %s, 학과 = %s, 상태 = %s
+                WHERE 학번 = %s
+                """
+            cursor.execute(query2, (std_id.get(), name.get(), email.get(), major_code, state.get(), std_id.get(),))
+            db_connection.commit()
+
+            messagebox.showinfo("수정 성공", "학생을 성공적으로 수정했습니다")
+        else:
+            query2 = """
+                INSERT INTO 학생정보(학번, 이름, 이메일, 학과, 상태)
+                VALUES (%s, %s, %s, %s, %s)
+                """
+            cursor.execute(query2, (std_id.get(), name.get(), email.get(), major_code, state.get()))
+            db_connection.commit()
+
+            messagebox.showinfo("추가 성공", "학생을 성공적으로 추가했습니다")
+
     else:
-        messagebox.showinfo("add()함수가 없음", "해당 함수를 제작하는대로 호출되도록 할 예정")
 
-    # 학생목록 비우기
+        # 에러창 생성 : 추가 실패
+        messagebox.showerror("학생 정보 추가/수정 오류", "비정상적인 값")
+
+
+    # 3. 학생목록 비우기
     for item in tree.get_children():
         tree.delete(item)
 
-    # 수정 or 추가 후, 입력란 모두 비우기
+    # 4. 수정 or 추가 후, 입력란 모두 비우기
     std_id.config("normal")
     std_id.delete(0, tk.END)
     std_id.config(state="disabled")
@@ -108,11 +142,49 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
 
     state.set("")
 
+    # 5. 데이터베이스 연결 종료
+    db_connection.close()
 
-# 학생 정보 추가 함수
-def add_student(std_id:str, name:str, email:str, major:str, state:str):
 
-    # 1. 학생 정보 추가 전, 조건 체크
+# 식제 함수
+def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox, delete_btn:tk.Button, tree:ttk.Treeview):
+    
+    # 데이터베이스 연결, 커서 생성
+    db_connection = Connect.connect_to_mysql()
+    cursor = db_connection.cursor()
+
+    # 학생정보에서 해당하는 정보 삭제하기(SQL문으로)
+    query = "DELETE FROM 학생정보 WHERE 학번 = %s"
+    cursor.execute(query, (std_id.get(),))
+    db_connection.commit()
+
+    # 학생목록 비우기
+    for item in tree.get_children():
+        tree.delete(item)
+
+    # 입력란 모두 비우기
+    std_id.config(state="normal")
+    std_id.delete(0, tk.END)
+    std_id.config(state="disabled")
+
+    name.config(state="normal")
+    name.delete(0, tk.END)
+    name.config(state="disabled")
+
+    email.delete(0, tk.END)
+
+    major.set("선택")
+
+    state.set("")
+
+    # 데이터베이스 연결 종료
+    db_connection.close()
+
+
+
+# 추가/수정 전 제약조건 설정 함수
+def check_for_save(std_id:str, name:str, email:str, major:str, state:str):
+
     # >> 조건 - 학번 1 : 학번은 5자리 숫자
     check_id1 = re.fullmatch(r'\d{5}', std_id)
 
@@ -122,8 +194,8 @@ def add_student(std_id:str, name:str, email:str, major:str, state:str):
     query = "SELECT 학번 FROM 학생정보"           # 조회 쿼리 생성
     cursor.execute(query)                       # 조회 쿼리 실행
     result = cursor.fetchall()                  # 조회 결과
-    connection.close()                          # 커넥션 종료
     existing_ids = {str(row[0]) for row in result}  # 리스트화
+    connection.close()                          # 커넥션 종료
 
     check_id2 = std_id not in existing_ids
 
@@ -139,36 +211,7 @@ def add_student(std_id:str, name:str, email:str, major:str, state:str):
     # >> 조건 - 상태 : (추가할 때 상태는 항상) "재학"만 선택되어있어야 함
     check_state = state == "재학"
 
-    # 2. 모든 조건을 체크하고 학생 정보 추가 수행
     if check_id1 and check_id2 and check_name and check_email and check_major and check_state:
-
-        # 데이터베이스 연결, 커서 생성
-        connection = Connect.connect_to_mysql()
-        cursor = connection.cursor()
-
-        # 쿼리 생성->실행->(영구적인)저장
-        query = """
-        INSERT INTO (
-            SELECT A.학번, A.이름, A.이메일, B.명칭, A.상태
-            FROM 학생정보 A JOIN 학과정보 B
-            WHERE A.학과 = B.학과코드
-        )
-        VALUES (
-            %s, %s, %s, %s, %s
-        )
-        """
-        cursor.execute(query, (std_id, name, email, major, state,))
-        connection.commit()
-
-        # 알림창 생성 : 추가 성공
-        messagebox.showinfo("학생 정보 추가 성공", "학생 정보를 성공적으로 추가했습니다")
-
+        return True
     else:
-
-        # 에러창 생성 : 추가 실패
-        messagebox.showerror("학생 정보 추가 실패", "정상적인 값을 입력해주세요")
-
-
-if __name__ == "__main__":
-    # 테스트할 때만 쓰는 듯
-    None
+        return False

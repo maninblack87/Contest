@@ -1,11 +1,13 @@
+# t3.py
 import tkinter as tk
 from tkinter import ttk
 import json
 
 import Connect
-from Query import searchStudentInfo, click_add_button
-from Event import on_tree_select
-from Logout import logout
+import Query
+import Event
+import Logout
+import Router
 
 # 데이터베이스 연결 및 (쿼리를 전송할) 커서 생성
 db_connection = Connect.connect_to_mysql()
@@ -42,7 +44,7 @@ label3 = tk.Label(frame1, text="이름", width=5, height=1)
 label3.pack(side="left")
 entry3 = tk.Entry(frame1, width=10)
 entry3.pack(side="left", padx=10)
-button1 = tk.Button(frame1, text="검색", width=10, command= lambda: searchStudentInfo(combo1.get(), entry2.get(), entry3.get(), tree))
+button1 = tk.Button(frame1, text="검색", width=10, command= lambda: Query.searchStudentInfo(combo1.get(), entry2.get(), entry3.get(), tree))
 button1.pack(side="left", padx=10)
 
 # 구분선
@@ -126,19 +128,19 @@ frame3_4.columnconfigure(0, weight=100)
 frame3_4.columnconfigure(1, weight=100)
 frame3_4.columnconfigure(2, weight=100)
 # >> >> 추가 버튼
-add_btn = tk.Button(frame3_4, text="추가", width=10, command=lambda: click_add_button(combo1, entry2, entry3, entry4, entry5, entry6, combo7, combo8))
+add_btn = tk.Button(frame3_4, text="추가", width=10, command=lambda: Query.click_add_button(combo1, entry2, entry3, entry4, entry5, entry6, combo7, combo8))
 add_btn.grid(row=0, column=0, padx=10, pady=5, ipady=5)
 # >> >> 저장 버튼
-save_btn = tk.Button(frame3_4, text="저장", width=10, )
+save_btn = tk.Button(frame3_4, text="저장", width=10, command=lambda: Query.click_save_button(entry4, entry5, entry6, combo7, combo8, tree))
 save_btn.grid(row=0, column=1, padx=10, pady=5, ipady=5)
 # >> >> 삭제 버튼
-delete_btn = tk.Button(frame3_4, text="삭제", width=10)
+delete_btn = tk.Button(frame3_4, text="삭제", width=10, command=lambda: Query.click_delete_button(entry4, entry5, entry6, combo7, combo8, delete_btn, tree))
 delete_btn.grid(row=0, column=2, padx=10, pady=5, ipady=5)
 # >> >> 로그아웃 버튼
-logout_btn = tk.Button(frame3_4, text="로그아웃", width=10, command=lambda: logout(root))
+logout_btn = tk.Button(frame3_4, text="로그아웃", width=10, command=lambda: Logout.logout(root))
 logout_btn.grid(row=1, column=0, padx=10, pady=5, ipady=5)
 # >> >> 메인화면 버튼
-go_main_btn = tk.Button(frame3_4, text="메인화면", width=24)
+go_main_btn = tk.Button(frame3_4, text="메인화면", width=24, command=lambda: Router.run_t2(root))
 go_main_btn.grid(row=1, column=1, columnspan=2, padx=10, pady=5, ipady=5)
 
 # 권한에 따른 권한 부여/제한
@@ -151,6 +153,6 @@ if (current_user["role"] == "user"):
 
 # 이벤트 바인딩
 # >> Treeview에서 항목 선택시 이벤트 발생
-tree.bind("<<TreeviewSelect>>", lambda e: on_tree_select(tree, entry4, entry5, entry6, combo7, combo8, current_user, delete_btn))
+tree.bind("<<TreeviewSelect>>", lambda e: Event.on_tree_select(tree, entry4, entry5, entry6, combo7, combo8, current_user, delete_btn))
 
 root.mainloop()
