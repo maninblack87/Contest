@@ -19,6 +19,7 @@ def login(emp_id, password, root):
     # result에 계정 정보가 있으면, 로그인 과정을 수행
     if result:
 
+        # 사용자 계정 정보가 저장된 딕셔너리 생성
         current_user = {
             "id" : result[0],
             "name": result[1],
@@ -26,7 +27,7 @@ def login(emp_id, password, root):
             "password": result[3]
         }
 
-        # CurrentUser.json 파일로 저장
+        # 해당 딕셔너리를 CurrentUser.json 파일에 저장
         with open("CurrentUser.json", "w", encoding="utf-8") as f:
             json.dump(current_user, f, ensure_ascii=False, indent=4)
 
