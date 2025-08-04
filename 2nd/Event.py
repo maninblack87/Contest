@@ -22,9 +22,6 @@ def on_tree_select(tree, std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:t
 
     # 선택한 트리의 값만 가져오기
     values = tree.item(selected_item, "values")
-    # >> 예외
-    if not values or len(values) < 4:
-        return
 
     # 데이터베이스 연결
     db_connection = Connect.connect_to_mysql()

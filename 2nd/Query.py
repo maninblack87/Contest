@@ -77,8 +77,16 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
     db_connection = Connect.connect_to_mysql()
     cursor = db_connection.cursor()
 
+    # 수정 혹은 추가 여부를 체크해서 check_for_save()함수에 반영시킨다
+    # >> 참고 : check_for_save()함수에는 추가할때만 체크해야하는 부분이 있음
+    # >> 수정 여부 체크방법 : 추가버튼을 누를 때 활성화되는 입력란을 통해 체크 가능
+    if std_id.cget("state")=="normal" and name.cget("state")=="normal" and email.cget("state")=="normal":
+        is_modify = False
+    else:
+        is_modify = True
+
     # 모든 제약조건을 체크하고 학생 정보 추가 수행
-    if check_for_save(std_id.get(), name.get(), email.get(), major.get(), state.get()):
+    if check_for_save(std_id.get(), name.get(), email.get(), major.get(), state.get(), is_modify):
 
         # 입력된 학과 명칭을 학생정보 테이블의 학과 번호로 변환
         query1 = """
@@ -127,16 +135,31 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
     for item in tree.get_children():
         tree.delete(item)
 
+    # 갱신된 학생목록으로 다시 표시하기
+    # >> (변경되었을) 학생정보 테이블 다시 조회
+    query = """
+        SELECT A.이름, A.학번, B.명칭, A.상태
+        FROM 학생정보 A
+        LEFT JOIN 학과정보 B ON A.학과 = B.학과코드
+        ORDER BY A.학번
+    """
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    # >> 해당 조회된 정보들을 학생목록에 표시
+    for row in rows:
+        tree.insert('', tk.END, values=row)
+
     # 수정 or 추가 후, 입력란 모두 비우기
-    std_id.config("normal")
+    std_id.config(state="normal")
     std_id.delete(0, tk.END)
     std_id.config(state="disabled")
     
-    name.config("normal")
+    name.config(state="normal")
     name.delete(0, tk.END)
     name.config(state="disabled")
 
     email.delete(0, tk.END)
+    email.config(0, tk.END)
 
     major.set("선택")
 
@@ -144,6 +167,56 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
 
     # 데이터베이스 연결 종료
     db_connection.close()
+
+
+# 추가/수정 전 제약조건 설정 함수
+def check_for_save(std_id:str, name:str, email:str, major:str, state:str, is_modify:bool):
+
+    # >> 조건 - 학번 1 : 학번은 5자리 숫자
+    if not re.fullmatch(r'\d{5}', std_id):
+        messagebox.showerror("학번 입력 오류", "학번은 5자리 숫자로 입력되어야 합니다")
+        return False
+    
+    # >> 조건 - 학번 2 : 
+    # >> >> 학번 2-1 : 수정이 아닐 경우 아래 조건문 실행
+    if not is_modify:
+
+        # >> >> 학번 2-2 : (데이터베이스에 있는) 기존 학번과 중복이 없어야 학생 정보 추가가 가능함
+        connection = Connect.connect_to_mysql()     # 데이터베이스 연결
+        cursor = connection.cursor()                # 커서 생성
+        query = "SELECT 학번 FROM 학생정보"           # 조회 쿼리 생성
+        cursor.execute(query)                       # 조회 쿼리 실행
+        result = cursor.fetchall()                  # 조회 결과
+        existing_ids = {str(row[0]) for row in result}  # 리스트화
+        connection.close()                          # 커넥션 종료
+
+        # 기존 데이터베이스에 학번이 있으면 해당 정보가 추가되지 않도록 False값을 반환한다
+        if std_id in existing_ids:
+            messagebox.showerror("학번 입력 오류", "기존에 있는 학번으로 추가를 시도하셨습니다")
+            return False
+
+    # >> 조건 - 이름 : 최소 2글자 이상
+    if not len(name) >= 2:
+        messagebox.showerror("이름 입력 오류", "이름은 2글자 이상 이어야 합니다")
+        return False
+
+    # >> 조건 - 이메일 : 최소 8글자 이상
+    if not len(email) >= 8:
+        messagebox.showerror("이메일 입력 오류", "이메일은 8글자 이상이어야 합니다")
+        return False
+
+    # >> 조건 - 학과 : "선택" 항목 외 다른 항목이 선택되여야 함
+    if not major != "선택":
+        messagebox.showerror("학과 입력 오류", "학과를 선택하셔야 합니다")
+        return False
+
+    # >> 조건 - 상태 : (추가할 때 상태는 항상) "재학"만 선택되어있어야 함
+    if not state == "재학":
+        messagebox.showerror("상태 입력 오류", "상태는 재학이여야만 합니다")
+        return False
+
+    # 모든 조건에 맞아서 여기까지 온다면 True값으로 반환한다
+    return True
 
 
 # 식제 함수
@@ -162,6 +235,20 @@ def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:tt
     for item in tree.get_children():
         tree.delete(item)
 
+    # 갱신된 학생목록으로 다시 표시하기
+    # >> (변경되었을) 학생정보 테이블 다시 조회
+    query = """
+        SELECT A.이름, A.학번, B.명칭, A.상태
+        FROM 학생정보 A
+        LEFT JOIN 학과정보 B ON A.학과 = B.학과코드
+        ORDER BY A.학번
+    """
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    # >> 해당 조회된 정보들을 학생목록에 표시
+    for row in rows:
+        tree.insert('', tk.END, values=row)
+
     # 입력란 모두 비우기
     std_id.config(state="normal")
     std_id.delete(0, tk.END)
@@ -171,7 +258,7 @@ def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:tt
     name.delete(0, tk.END)
     name.config(state="disabled")
 
-    email.delete(0, tk.END)
+    email.config(state="disabled")
 
     major.set("선택")
 
@@ -182,39 +269,11 @@ def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:tt
 
 
 
-# 추가/수정 전 제약조건 설정 함수
-def check_for_save(std_id:str, name:str, email:str, major:str, state:str, is_modify:bool):
+# 암호 변경 함수
+def change_pw(current_pw, new_pw, verify_new_pw):
 
-    # >> 조건 - 학번 1 : 학번은 5자리 숫자
-    if not re.fullmatch(r'\d{5}', std_id):
-        return False
+    # 조건 충족 단계
 
-    # >>>>>> #### 작업 중 ######<<<<<
-    # >> 조건 - 학번 2 : (데이터베이스에 있는) 기존 학번과 중복 금지
-    connection = Connect.connect_to_mysql()     # 데이터베이스 연결
-    cursor = connection.cursor()                # 커서 생성
-    query = "SELECT 학번 FROM 학생정보"           # 조회 쿼리 생성
-    cursor.execute(query)                       # 조회 쿼리 실행
-    result = cursor.fetchall()                  # 조회 결과
-    existing_ids = {str(row[0]) for row in result}  # 리스트화
-    connection.close()                          # 커넥션 종료
+    # 암호 변경 수행
 
-    check_id2 = std_id not in existing_ids if not is_modify else True
-
-    # >> 조건 - 이름 : 최소 2글자 이상
-    check_name = len(name) >= 2
-
-    # >> 조건 - 이메일 : 최소 8글자 이상
-    check_email = len(email) >= 8
-
-    # >> 조건 - 학과 : "선택" 항목 외 다른 항목이 선택되여야 함
-    check_major = major != "선택"
-
-    # >> 조건 - 상태 : (추가할 때 상태는 항상) "재학"만 선택되어있어야 함
-    check_state = state == "재학"
-
-    # 결과 반환
-    if check_id1 and check_id2 and check_name and check_email and check_major and check_state:
-        return True
-    else:
-        return False
+    None
