@@ -1,9 +1,11 @@
+# Event.py
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 
 import Connect
 
+# 학생 항목(tree)에서 하나의 항목을 선택하면 우측 입력창에 학생 정보가 표시되는 함수
 def on_tree_select(tree, std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox, current_user, delete_button:tk.Button):
     """
     tree(ttk.Treeview)에서 학생 항목을 선택하면 해당 학생의 정보를 우측 입력란에 표시하는 함수
@@ -72,3 +74,26 @@ def on_tree_select(tree, std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:t
     # >> 삭제 기능 부여
     if current_user["role"] == 'admin':
         delete_button.config(state="normal")
+
+
+# 입력창을 체크해서, 비밀번호 변경 조건이 맞으면, (비밀번호를 변경시키는) 저장 버튼을 활성화시키는 함수
+def check_allowed_change_password(current_pw:str, new_pw:str, verify_new_pw:str, save_btn:tk.Button):
+
+    # 조건1 : 모든 텍스트 박스에 8글자 이상 입력되어야 함
+    if len(current_pw) < 8 or len(new_pw) < 8 or len(verify_new_pw) < 8:
+        save_btn.config(state="disabled")
+        return
+    
+    # 조건2 : "새 암호"와 "새 암호 확인" 입력 값이 같아야 함
+    if new_pw != verify_new_pw:
+        save_btn.config(state="disabled")
+        return
+
+    # 조건3 : "현재 암호"에 입력된 값과, "새 암호"에 입력된 값이 달라야 함
+    if current_pw == new_pw:
+        save_btn.config(state="disabled")
+        return
+
+    # 모든 조건이 맞으면
+    # >> (비밀번호를 변경시키는) 저장 버튼을 활성화 처리
+    save_btn.config(state="normal")

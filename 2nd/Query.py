@@ -3,8 +3,10 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import re
+import json
 
 import Connect
+import Router
 
 # 학생정보 테이블 검색 함수
 def searchStudentInfo(major, std_id, name, tree):
@@ -88,7 +90,14 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
     # 모든 제약조건을 체크하고 학생 정보 추가 수행
     if check_for_save(std_id.get(), name.get(), email.get(), major.get(), state.get(), is_modify):
 
-        # 입력된 학과 명칭을 학생정보 테이블의 학과 번호로 변환
+        # 추가 or 수정 여부 확인
+        query1 = "SELECT COUNT(*) FROM 학생정보 WHERE 학번 = %s"
+        cursor.execute(query1, (std_id.get(),))
+        result = cursor.fetchone()
+        existing_id = result[0]
+
+        # 미리 입력된 학과 명칭을 학생정보 테이블의 학과 번호로 변환
+        # >> 다음에 수행될 수정/추가 SQL문에의해 참조됨
         query1 = """
             SELECT 학과코드 
             FROM 학과정보
@@ -97,12 +106,6 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
         cursor.execute(query1, (major.get(),))
         result = cursor.fetchone()
         major_code = result[0]
-
-        # 추가 or 수정 여부 확인
-        query1 = "SELECT COUNT(*) FROM 학생정보 WHERE %s = 학번"
-        cursor.execute(query1, (std_id.get(),))
-        result = cursor.fetchone()
-        existing_id = result[0]
 
         # 추가/수정 여부에 따라 SQL문 생성->실행->결과도출
         if existing_id > 0:
@@ -115,12 +118,13 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
             db_connection.commit()
 
             messagebox.showinfo("수정 성공", "학생을 성공적으로 수정했습니다")
+
         else:
             query2 = """
                 INSERT INTO 학생정보(학번, 이름, 이메일, 학과, 상태)
                 VALUES (%s, %s, %s, %s, %s)
                 """
-            cursor.execute(query2, (std_id.get(), name.get(), email.get(), major_code, state.get()))
+            cursor.execute(query2, (std_id.get(), name.get(), email.get(), major_code, state.get(),))
             db_connection.commit()
 
             messagebox.showinfo("추가 성공", "학생을 성공적으로 추가했습니다")
@@ -159,7 +163,7 @@ def click_save_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.
     name.config(state="disabled")
 
     email.delete(0, tk.END)
-    email.config(0, tk.END)
+    email.config(state="disabled")
 
     major.set("선택")
 
@@ -206,7 +210,7 @@ def check_for_save(std_id:str, name:str, email:str, major:str, state:str, is_mod
         return False
 
     # >> 조건 - 학과 : "선택" 항목 외 다른 항목이 선택되여야 함
-    if not major != "선택":
+    if major == "선택":
         messagebox.showerror("학과 입력 오류", "학과를 선택하셔야 합니다")
         return False
 
@@ -268,12 +272,52 @@ def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:tt
     db_connection.close()
 
 
+# 비밀번호 변경 함수
+def change_password(current_pw:tk.Entry, new_pw:tk.Entry, verify_new_pw:tk.Entry):
 
-# 암호 변경 함수
-def change_pw(current_pw, new_pw, verify_new_pw):
+    # 1. 로그인 사용자의 암호와 현재 암호에 입력한 암호가 같은지 비교
+    # >>현재 로그인 중인 사용자 불러오기
+    with open("CurrentUser.json", "r", encoding="utf-8") as f:
+        current_user = json.load(f)
 
-    # 조건 충족 단계
+    # >> 해당 암호들을 서로 비교해서, 다르면 에러 처리
+    if current_pw.get() != current_user["password"]:
+        # 에러 메세지 창
+        messagebox.showerror("현재 사용자 인증 실패", "현재 사용자 인증 실패")
+        # (에러 메세지 창이 닫히면) 현재 암호 텍스트박스 내의 입력된 값이
+        # >> 모두 선택되고, 새로 입력되도록 포커싱한다
+        current_pw.focus_set()
+        current_pw.select_range(0, tk.END)
+        return
+    
+    # 2. 아래 조건이 만족되면, 암호가 변경되도록 한다
 
-    # 암호 변경 수행
+    # >> 조건1 : 현재 암호 값이 데이터베이스의 현재 사용자의 암호와 일치
+    db_connection = Connect.connect_to_mysql()          # 데이터베이스 연결
+    cursor = db_connection.cursor()                     # 커서 생성
+    query = "SELECT 암호 FROM 업무사용자 WHERE 사번 = %s"  # 쿼리문 생성
+    cursor.execute(query, (current_user["id"],))        # 쿼리 실행
+    result = cursor.fetchone()                          
+    db_user_pw = result[0]                              # 해당 데이터베이스 사용자 암호 저장
+    # >> >> 조건1 수행
+    check1 = current_user["password"] == db_user_pw
 
-    None
+    # >> 조건2 : 현재 암호에 입력된 값이 새 암호의 값과 달라야 됨
+    check2 = current_pw.get() != new_pw.get()
+
+    # >> 조건3 : 새 암호와 새 암호 확인에 입력된 값이 같아야 됨
+    check3 = new_pw.get() == verify_new_pw.get()
+
+    # >> 조건은 모두 충족되면 암호 변경을 실행한다
+    if check1 and check2 and check3:
+
+        # >> 암호 변경 수행
+        query = "UPDATE 업무사용자 SET 암호 = %s WHERE 사번 = %s"
+        cursor.execute(query, (new_pw.get(), current_user["id"],))
+        db_connection.commit()
+
+        # >> 성공 메세지
+        messagebox.showinfo("암호저장 완료", "암호가 성공적으로 저장되었습니다")
+
+        # >> 로그인 화면으로 이동
+        Router.run_t2()

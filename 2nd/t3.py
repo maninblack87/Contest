@@ -151,7 +151,7 @@ if (current_user["role"] == "user"):
     save_btn.config(state="disabled")
     delete_btn.config(state="disabled")
 
-# 이벤트 바인딩
+# 실시간 이벤트 처리
 # >> Treeview에서 항목 선택시 이벤트 발생
 tree.bind("<<TreeviewSelect>>", lambda e: Event.on_tree_select(tree, entry4, entry5, entry6, combo7, combo8, current_user, delete_btn))
 
