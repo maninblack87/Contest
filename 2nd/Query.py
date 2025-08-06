@@ -273,25 +273,14 @@ def click_delete_button(std_id:tk.Entry, name:tk.Entry, email:tk.Entry, major:tt
 
 
 # 비밀번호 변경 함수
-def change_password(current_pw:tk.Entry, new_pw:tk.Entry, verify_new_pw:tk.Entry):
+def change_password(current_pw:str, new_pw:str, verify_new_pw:str):
 
     # 1. 로그인 사용자의 암호와 현재 암호에 입력한 암호가 같은지 비교
     # >>현재 로그인 중인 사용자 불러오기
     with open("CurrentUser.json", "r", encoding="utf-8") as f:
         current_user = json.load(f)
-
-    # >> 해당 암호들을 서로 비교해서, 다르면 에러 처리
-    if current_pw.get() != current_user["password"]:
-        # 에러 메세지 창
-        messagebox.showerror("현재 사용자 인증 실패", "현재 사용자 인증 실패")
-        # (에러 메세지 창이 닫히면) 현재 암호 텍스트박스 내의 입력된 값이
-        # >> 모두 선택되고, 새로 입력되도록 포커싱한다
-        current_pw.focus_set()
-        current_pw.select_range(0, tk.END)
-        return
     
     # 2. 아래 조건이 만족되면, 암호가 변경되도록 한다
-
     # >> 조건1 : 현재 암호 값이 데이터베이스의 현재 사용자의 암호와 일치
     db_connection = Connect.connect_to_mysql()          # 데이터베이스 연결
     cursor = db_connection.cursor()                     # 커서 생성
@@ -300,24 +289,37 @@ def change_password(current_pw:tk.Entry, new_pw:tk.Entry, verify_new_pw:tk.Entry
     result = cursor.fetchone()                          
     db_user_pw = result[0]                              # 해당 데이터베이스 사용자 암호 저장
     # >> >> 조건1 수행
-    check1 = current_user["password"] == db_user_pw
+    check1 = current_pw == db_user_pw
 
     # >> 조건2 : 현재 암호에 입력된 값이 새 암호의 값과 달라야 됨
-    check2 = current_pw.get() != new_pw.get()
+    check2 = current_pw != new_pw
 
     # >> 조건3 : 새 암호와 새 암호 확인에 입력된 값이 같아야 됨
-    check3 = new_pw.get() == verify_new_pw.get()
+    check3 = new_pw == verify_new_pw
 
     # >> 조건은 모두 충족되면 암호 변경을 실행한다
     if check1 and check2 and check3:
 
+        # A-1 : 각 조건이 맞지 않으면 "실패한 조건이름(번호)"를 반환
+        if not check1:
+            return "failed_check1"
+        elif not check2:
+            return "failed_check2"
+        elif not check3:
+            return "failed_check3"
+
         # >> 암호 변경 수행
         query = "UPDATE 업무사용자 SET 암호 = %s WHERE 사번 = %s"
-        cursor.execute(query, (new_pw.get(), current_user["id"],))
+        cursor.execute(query, (new_pw, current_user["id"],))
         db_connection.commit()
+
+        # 암호 변경 후에
+        current_user["password"] = new_pw
+        with open("CurrentUser.json", "w", encoding="utf-8") as f:
+            json.dump(current_user, f, indent=4, ensure_ascii=False)
 
         # >> 성공 메세지
         messagebox.showinfo("암호저장 완료", "암호가 성공적으로 저장되었습니다")
 
-        # >> 로그인 화면으로 이동
-        Router.run_t2()
+        # A-2 : 모든 조건을 통과하면 "성공"을 반환
+        return "success"
