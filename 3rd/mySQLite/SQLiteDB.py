@@ -4,17 +4,16 @@ import sqlite3
 
 class SQLiteDB:
     # 초기화
-    def __init__(self, db_file="test.sqlite"):
+    def __init__(self, db_file="my_db.sqlite"):
         self.db_file = db_file
         self.conn = None
         self.cursor = None
 
 
     # 데이터베이스 연결
-    def connect(self):
+    def connect_to_sqlite(self):
         self.conn = sqlite3.connect(self.db_file)
         self.cursor = self.conn.cursor()
-
 
     # *SQL 파일 실행
     def execute_file(self, sql_file):

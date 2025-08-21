@@ -1,6 +1,8 @@
 # t1.py
 import tkinter as tk
 
+from modules import Login
+
 def main():
     # 루트 위젯
     root = tk.Tk()
@@ -33,7 +35,7 @@ def main():
     frame3.pack(side="bottom", fill="x")
     quit_btn = tk.Button(frame3, text="종료", width=8)
     quit_btn.pack(side="right", padx=10, pady=10)
-    login_btn = tk.Button(frame3, text="로그인", width=8)
+    login_btn = tk.Button(frame3, text="로그인", width=8, command=lambda: Login.login(entry1.get(), entry2.get(), root))
     login_btn.pack(side="right", pady=10)
 
     # 루트 위젯을 GUI로 활성화

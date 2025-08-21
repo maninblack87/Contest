@@ -1,9 +1,14 @@
 # Router.py
-import os, sys
+import subprocess
 
+def run_t2(current_window):
+    current_window.destroy()
+    subprocess.Popen(["python", "t2.py"])
 
+def run_t3(current_window):
+    current_window.destroy()
+    subprocess.Popen(["python", "t3.py"])
 
-if __name__ == "__main__":
-    print("__file__ : ", __file__)
-    print("os.path.abspath(__file__) : ", os.path.abspath(__file__))
-    print("os.path.dirname(os.path.abspath(__file__)) : ", os.path.dirname(os.path.abspath(__file__)))
+def run_t4(current_window):
+    current_window.destroy()
+    subprocess.Popen(["python", "t4.py"])
