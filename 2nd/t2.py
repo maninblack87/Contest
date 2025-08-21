@@ -15,6 +15,7 @@ root.geometry("500x250")
 root.resizable(False, False)
 root.option_add("*Font", "Gothic 12")
 
+
 # 프레임1
 frame1 = tk.Frame(root, padx=30, pady=10)
 frame1.pack(side="left", anchor="nw")

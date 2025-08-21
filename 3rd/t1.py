@@ -33,7 +33,7 @@ def main():
     # >> 버튼
     frame3 = tk.Frame(main)
     frame3.pack(side="bottom", fill="x")
-    quit_btn = tk.Button(frame3, text="종료", width=8)
+    quit_btn = tk.Button(frame3, text="종료", width=8, command=root.quit)
     quit_btn.pack(side="right", padx=10, pady=10)
     login_btn = tk.Button(frame3, text="로그인", width=8, command=lambda: Login.login(entry1.get(), entry2.get(), root))
     login_btn.pack(side="right", pady=10)
