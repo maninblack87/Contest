@@ -1,14 +1,18 @@
 # Router.py
 import subprocess
 
-def run_t2(current_window):
+def open_t1(current_window):
     current_window.destroy()
-    subprocess.Popen(["python", "t2.py"])
+    subprocess.run(["python", "t1.py"])
 
-def run_t3(current_window):
+def open_t2(current_window):
     current_window.destroy()
-    subprocess.Popen(["python", "t3.py"])
+    subprocess.run(["python", "t2.py"])
 
-def run_t4(current_window):
+def open_t3(current_window):
     current_window.destroy()
-    subprocess.Popen(["python", "t4.py"])
+    subprocess.run(["python", "t3.py"])
+
+def open_t4(current_window):
+    current_window.destroy()
+    subprocess.run(["python", "t4.py"])

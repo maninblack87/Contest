@@ -6,7 +6,7 @@ from mySQLite import SQLiteDB
 from routes import Router
 
 
-def login(id, pw, root):
+def login(id, pw, current_window):
 
     # 1. 데이터베이스 연결
     # 데이터베이스 연결 및 커서 생성
@@ -38,8 +38,8 @@ def login(id, pw, root):
             json.dump(current_user, f, ensure_ascii=False, indent=4)
 
         # 두번째 창으로 전환시키기
-        root.withdraw()
-        Router.run_t2(root)
+        current_window.withdraw()
+        Router.open_t2(current_window)
 
         # 메세지 : 로그인 성공
         messagebox.showinfo("", "로그인 성공")
