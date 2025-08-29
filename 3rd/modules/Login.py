@@ -37,12 +37,12 @@ def login(id, pw, current_window):
         with open("CurrentUser.json", "w", encoding="utf-8") as f:
             json.dump(current_user, f, ensure_ascii=False, indent=4)
 
+        # 메세지 : 로그인 성공
+        messagebox.showinfo("", "로그인 성공")
+
         # 두번째 창으로 전환시키기
         current_window.withdraw()
         Router.open_t2(current_window)
-
-        # 메세지 : 로그인 성공
-        messagebox.showinfo("", "로그인 성공")
 
     else:
 

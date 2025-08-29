@@ -114,12 +114,17 @@ def main():
 
     # 우측4 프레임 : 버튼 모음 부분
     frame_r4 = tk.Frame(frame_right, width=400, height=70, pady=5)
-    frame_r4.pack(side="bottom", anchor="nw")
-    btn_add = tk.Button(frame_r4, text="추가", width=5)
-    btn_add.pack(side="left", padx=5)
-    btn_save = tk.Button(frame_r4, text="저장", width=5)
-    btn_save.pack(side="left", padx=5)
-    btn_del = tk.Button(frame_r4, text="삭제", width=5)
+    frame_r4.pack(side="bottom", anchor="nw", fill="x")
+    btn_add = tk.Button(frame_r4, text="추가")
+    btn_add.grid(row=0, column=0)
+    btn_save = tk.Button(frame_r4, text="저장")
+    btn_save.grid(row=0, column=1)
+    btn_del = tk.Button(frame_r4, text="삭제")
+    btn_del.grid(row=0, column=2)
+    btn_logout = tk.Button(frame_r4, text="로그아웃")
+    btn_logout.grid(row=1, column=0)
+    btn_main = tk.Button(frame_r4, text="메인 화면")
+    btn_main.grid(row=1, column=1, columnspan=2)
 
     # 루트로 GUI 활성화
     root.mainloop()
