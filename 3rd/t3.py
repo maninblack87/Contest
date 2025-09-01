@@ -18,7 +18,7 @@ def main():
     root.option_add("*Font", "Gothic 11")
 
     # 상단 프레임 : 학생 정보 목록을 검색하는 부분
-    frame_top = tk.Frame(root, height=50, bg="#faa")
+    frame_top = tk.Frame(root, height=50)
     frame_top.pack(side="top", fill="both", ipady=10)
     # >> 학과
     query1 = "select 명칭 from 학과정보"
@@ -51,7 +51,7 @@ def main():
     hor_line.pack(side="top", fill="x")
 
     # 좌측 프레임 : 학생 정보 목록이 표시되는 부분
-    frame_left = tk.Frame(root, width=250, height=350, padx=10, pady=10, bg="#afa")
+    frame_left = tk.Frame(root, width=250, height=350, padx=10, pady=10)
     frame_left.pack(side="left", fill="both", expand=True)
     tree = ttk.Treeview(frame_left, columns=("이름", "학번", "학과", "상태"), show="headings")
     # 테이블
@@ -72,7 +72,7 @@ def main():
     scrollbar.pack(side="right", fill="y")
 
     # 우측 프레임 : 학생 정보를 입력하는 부분, 버튼 셋 부분
-    frame_right = tk.Frame(root, width=400, height=350, padx=10, pady=10, bg="#aaf")
+    frame_right = tk.Frame(root, width=400, height=350, padx=10, pady=10)
     frame_right.pack(side="right", fill="both", expand=True)
 
     # 우측1 프레임 : 학생 정보를 입력하는 부분(1)
@@ -115,16 +115,21 @@ def main():
     # 우측4 프레임 : 버튼 모음 부분
     frame_r4 = tk.Frame(frame_right, width=400, height=70, pady=5)
     frame_r4.pack(side="bottom", anchor="nw", fill="x")
+    # >> 행/열 비율 설정(버튼이 프레임에 맞게 확장됨)
+    for i in range(2):
+        frame_r4.rowconfigure(i, weight=1)
+    for j in range(3):
+        frame_r4.columnconfigure(j, weight=1)
     btn_add = tk.Button(frame_r4, text="추가")
-    btn_add.grid(row=0, column=0)
+    btn_add.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
     btn_save = tk.Button(frame_r4, text="저장")
-    btn_save.grid(row=0, column=1)
+    btn_save.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
     btn_del = tk.Button(frame_r4, text="삭제")
-    btn_del.grid(row=0, column=2)
+    btn_del.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
     btn_logout = tk.Button(frame_r4, text="로그아웃")
-    btn_logout.grid(row=1, column=0)
+    btn_logout.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
     btn_main = tk.Button(frame_r4, text="메인 화면")
-    btn_main.grid(row=1, column=1, columnspan=2)
+    btn_main.grid(row=1, column=1, columnspan=2, sticky="nsew", padx=5, pady=5)
 
     # 루트로 GUI 활성화
     root.mainloop()
