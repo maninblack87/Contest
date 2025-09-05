@@ -1,18 +1,18 @@
-# Router.py
+# routes/Router.py
 import subprocess
 
-def open_t1(current_window):
-    current_window.destroy()
-    subprocess.run(["python", "t1.py"])
+def run_w1(root):
+    root.destroy()
+    subprocess.run(["python", "w1.py"])
 
-def open_t2(current_window):
-    current_window.destroy()
-    subprocess.run(["python", "t2.py"])
+def run_w2(root):
+    root.destroy()
+    subprocess.run(["python", "w2.py"])
 
-def open_t3(current_window):
-    current_window.destroy()
-    subprocess.run(["python", "t3.py"])
+def run_w3(root):
+    root.destroy()
+    subprocess.run(["python", "w3.py"])
 
-def open_t4(current_window):
-    current_window.destroy()
-    subprocess.run(["python", "t4.py"])
+def run_w4(root):
+    root.destroy()
+    subprocess.run(["python", "w4.py"])

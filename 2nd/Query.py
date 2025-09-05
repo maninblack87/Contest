@@ -10,6 +10,12 @@ import Router
 
 # 학생정보 테이블 검색 함수
 def searchStudentInfo(major, std_id, name, tree):
+    """
+    major: 학과
+    std_id: 학번
+    name: 이름(학생)
+    tree: 검색 작업 수행후 표시될 학생정보 테이블
+    """
 
     # 데이터베이스 연결
     db_connection = Connect.connect_to_mysql()

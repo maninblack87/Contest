@@ -1,23 +1,24 @@
 # app.py
 import os
 
-from mySQLite import SQLiteDB
-import t1
+from config import DB_FILE
+from sqlite.DBconnection import DBconnection
+import w1
 
-# 데이터베이스 연결
-my_db = SQLiteDB.SQLiteDB()
-connect = my_db.connect_to_sqlite()
-cursor = my_db.cursor
+def main():
+    """
+    DB_FILE = db_file.sqlite
+    """
 
-# 기준 경로(app.py가 있는 폴더)
-base_dir = os.path.dirname(os.path.abspath(__file__))
+    if not os.path.exists(DB_FILE):
 
-# 데이터베이스에 각 테이블 추가 및 각 테이블에 레코드 추가
-sql_file = os.path.join(base_dir, "mySQLite", "DatabaseStructure.sql")
-my_db.execute_file(sql_file)
+        # 데이터베이스 및 테이블 생성
+        db = DBconnection(DB_FILE)
+        db.execute_sql("sqlite/DBstructure.sql")
+        db.close()
 
-# t1.py 실행
-t1.main()
+    # 로그인 창(w1.py) 실행
+    w1.main()
 
-# (프로그램 종료시) 데이터베이스 종료
-my_db.close()
+if __name__ == "__main__":
+    main()

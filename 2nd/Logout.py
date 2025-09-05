@@ -2,6 +2,7 @@ import json
 import subprocess
 
 def logout(current_window):
+
     # 1. 사용자 정보 초기화
     empty_user = {
         "id": "",
@@ -9,7 +10,6 @@ def logout(current_window):
         "role": "",
         "password": ""
     }
-
     with open("CurrentUser.json", "w", encoding="utf-8") as f:
         json.dump(empty_user, f, ensure_ascii=False, indent=4)
 
