@@ -5,6 +5,9 @@ import json
 
 from sqlite.DBconnection import DBconnection
 from config import DB_FILE
+from auth import Logout
+from routes import Router
+from events import Search, onTreeSelect
 
 def main():
 
@@ -48,7 +51,7 @@ def main():
     entry3 = tk.Entry(frame_top, width=10)
     entry3.pack(side="left", padx=5)
     # 검색 버튼
-    search_btn = tk.Button(frame_top, text="검색")
+    search_btn = tk.Button(frame_top, text="검색", command=lambda: Search.search(combo1.get(), entry2.get(), entry3.get(), tree))
     search_btn.pack(side="left", ipadx=10, padx=5)
     # 현재 사용자 정보(이름/권한)
     curr_user_info = f"{current_user['name']} / {current_user['role']}"
@@ -59,10 +62,11 @@ def main():
     hor_line = tk.Frame(root, bg="black")
     hor_line.pack(side="top", fill="x", padx=10)
 
-    # 목록부 위젯 생성
+    # 목록부
     frame_left = tk.Frame(root, bg="#aaf")
     frame_left.pack(side="left", fill="both", padx=10, pady=10)
-    # 목록(Treeview)
+
+    # >> 목록(Treeview)
     tree = ttk.Treeview(frame_left, columns=("이름", "학번", "학과", "상태"), show="headings")
     tree.heading("이름", text="이름")
     tree.column("이름", width=100)
@@ -72,18 +76,19 @@ def main():
     tree.column("학과", width=160)
     tree.heading("상태", text="상태")
     tree.column("상태", width=60)
-    # 스크롤바 생성
+    # >> 1. 목록 - 스크롤바 생성
     scrollbar = ttk.Scrollbar(frame_left, orient="vertical", command=tree.yview)
     tree.configure(yscrollcommand=scrollbar.set)
-    # 목록 배치
+    # >> 2. 목록 배치
     tree.pack(side="left", fill="y")
-    # 스크롤바 생성
+    # >> 3. 스크롤바 생성
     scrollbar.pack(side="right", fill="y")
 
-    # 입력부 위젯 생성
+    # 입력부
     frame_right = tk.Frame(root, padx=10, pady=10)
     frame_right.pack(side="left", fill="both")
-    # 학번, 이름
+
+    # >> 학번, 이름
     frame_ipt1 = tk.Frame(frame_right)
     frame_ipt1.pack(side="top", anchor="nw", pady=5)
     label6 = tk.Label(frame_ipt1, text="학번", anchor="w", width=4)
@@ -94,19 +99,21 @@ def main():
     label7.pack(side="left", padx=5)
     entry7 = tk.Entry(frame_ipt1, width=12)
     entry7.pack(side="left", padx=5)
-    # 이메일
+
+    # >> 이메일
     frame_ipt2 = tk.Frame(frame_right)
     frame_ipt2.pack(side="top", anchor="nw", pady=5)
     label8 = tk.Label(frame_ipt2, text="이메일", width=6)
     label8.pack(side="left", anchor="w")
     entry8 = tk.Entry(frame_ipt2, width=32)
     entry8.pack(side="left")
-    # 학과, 상태
+
+    # >> 학과, 상태
     frame_ipt3 = tk.Frame(frame_right)
     frame_ipt3.pack(side="top", anchor="nw", pady=5)
+    # >> 1. 학과
     label9 = tk.Label(frame_ipt3, text="학과", width=4, anchor="w")
     label9.pack(side="left", padx=5)
-    # >> 상태
     majors2 = ["선택"]
     query2 = "select 명칭 from 학과정보"
     db.cursor.execute(query2)
@@ -116,32 +123,44 @@ def main():
     combo9 = ttk.Combobox(frame_ipt3, width=12, values=majors2)
     combo9.pack(side="left", anchor="w", padx=5)
     combo9.current(0)
-    # <<
+    # >> 2. 상태
     label10 = tk.Label(frame_ipt3, text="상태", width=4, anchor="w")
     label10.pack(side="left", padx=5)
     states = ["재학", "졸업", "휴학", "퇴학"]
     combo10 = ttk.Combobox(frame_ipt3, width=7, values=states)
     combo10.pack(side="left", anchor="w", padx=5)
 
-    # 버튼부(아래) 위젯 생성
+    # 버튼부(아래) : 로그아웃, 메인화면 버튼
     frame_btn_bottom = tk.Frame(frame_right)
     frame_btn_bottom.pack(side="bottom", padx=10, pady=10, anchor="nw")
-    # 로그아웃, 메인화면 버튼
-    logout_btn = ttk.Button(frame_btn_bottom, width=10, text="로그아웃")
+    # 
+    logout_btn = ttk.Button(frame_btn_bottom, width=10, text="로그아웃", command=lambda: Logout.logout(root))
     logout_btn.pack(side="left", padx=5)
-    main_btn = ttk.Button(frame_btn_bottom, width=23, text="메인화면")
+    main_btn = ttk.Button(frame_btn_bottom, width=23, text="메인화면", command=lambda: Router.run_w2(root))
     main_btn.pack(side="right", padx=5)
 
-    # 버튼부(위) 위젯 생성
+    # 버튼부(위) : 추가, 저장, 삭제 버튼
     frame_btn_top = tk.Frame(frame_right)
     frame_btn_top.pack(side="bottom", padx=10, pady=10, anchor="nw")
-    # 추가/저장/삭제 버튼
-    add_btn = ttk.Button(frame_btn_top, width=10, text="추가")
+    # 
+    add_btn = ttk.Button(frame_btn_top, width=10, text="추가", state="disabled")
     add_btn.pack(side="left", padx=5)
-    save_btn = ttk.Button(frame_btn_top, width=10, text="저장")
+    save_btn = ttk.Button(frame_btn_top, width=10, text="저장", state="disabled")
     save_btn.pack(side="left", padx=5)
-    del_btn = ttk.Button(frame_btn_top, width=10, text="삭제")
+    del_btn = ttk.Button(frame_btn_top, width=10, text="삭제", state="disabled")
     del_btn.pack(side="left", padx=5)
+
+
+    # 해당 프로그램 시작시
+    # >> 권한에 따라 프로그램 상태 설정
+    # >> 1. 권한이 admin이면
+    if current_user["role"] == "admin":
+        add_btn.config(state="normal")
+        save_btn.config(state="normal")
+
+
+    # << 이벤트 >>
+    tree.bind("<<TreeviewSelect>>", lambda e: onTreeSelect.on_tree_select(tree, entry6, entry7, entry8, combo9, combo10))
 
 
     # 루트 활성화

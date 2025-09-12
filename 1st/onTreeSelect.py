@@ -5,15 +5,17 @@ import Connect
 
 def on_tree_select(tree, stdnum, name, email, major, state, delete_btn, current_user):
     
-    # 선택한 트리의 아이디 가져오기
+    # 선택한 노드의 아이디 가져오기
     selected_item = tree.focus()
 
+    # 선택된 노드가 없을 때(트리뷰의 빈 공간을 클릭했을 때) 즉시 해당 함수를 탈출
     if not selected_item:
         return
     
     # 선택한 트리의 값만 가져오기
     values = tree.item(selected_item, "values")
 
+    # 데이터 유효성 검사
     if not values or len(values) < 4:
         return
     

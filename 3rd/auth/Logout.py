@@ -13,10 +13,7 @@ def logout(root):
         "password" : ""
     }
     with open("CurrentUser.json", "w", encoding="utf-8") as f:
-        json.dump(current_user, ensure_ascii=False, indent=4)
+        json.dump(current_user, f, ensure_ascii=False, indent=4)
 
-    # 현재 창 종료
-    root.destroy()
-
-    # 로그인 창 다시 실행
+    # 로그인 창 실행
     Router.run_w1(root)
