@@ -38,14 +38,20 @@ def on_tree_select(tree:ttk.Treeview, id:tk.Entry, name:tk.Entry, email:tk.Entry
 
     # 입력창에 DB로부터 가져온 학생정보를 표시
     # 1. 학번
+    id.config(state="normal")
     id.delete(0, tk.END)
     id.insert(0, result[0])
+    id.config(state="disabled")
     # 2. 이름
+    name.config(state="normal")
     name.delete(0, tk.END)
     name.insert(0, result[1])
+    name.config(state="disabled")
     # 3. 이메일
+    email.config(state="normal")
     email.delete(0, tk.END)
     email.insert(0, result[2])
+    email.config(state="disabled")
     # 4. 학과
     major.set(result[3])
     # 5. 상태

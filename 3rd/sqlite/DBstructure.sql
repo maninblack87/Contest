@@ -26,6 +26,7 @@ create table if not exists 학생정보(
     학과 text not null,
     상태 text not null,
     check (상태 in ("재학", "졸업", "휴학", "퇴학"))
+    check (length(학번) = 5 and 학번 glob "[0-9]*")
 );
 
 -- 데이터 생성1 : 업무사용자

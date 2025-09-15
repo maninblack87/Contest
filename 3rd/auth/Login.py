@@ -51,6 +51,8 @@ def login(id_ent:tk.Entry, pw_ent:tk.Entry, root:tk.Tk):
         # 모든 입력차 초기화
         id_ent.delete(0, tk.END)
         pw_ent.delete(0, tk.END)
+
+        return
     
 
     # 현재 창 숨기기

@@ -51,7 +51,3 @@ def search(major:str, id:str, name:str, tree:ttk.Treeview):
     # 5-2. 트리뷰 추가(query결과)
     for row in result:
         tree.insert("", "end", values=(row[0], row[1], row[2], row[3]))
-
-    # ##### TEST ######
-    print(major)
-    print(query)

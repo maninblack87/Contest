@@ -93,11 +93,11 @@ def main():
     frame_ipt1.pack(side="top", anchor="nw", pady=5)
     label6 = tk.Label(frame_ipt1, text="학번", anchor="w", width=4)
     label6.pack(side="left", padx=5)
-    entry6 = tk.Entry(frame_ipt1, width=12)
+    entry6 = tk.Entry(frame_ipt1, width=12, state="disabled")
     entry6.pack(side="left", padx=5)
     label7 = tk.Label(frame_ipt1, text="이름", width=4, anchor="w")
     label7.pack(side="left", padx=5)
-    entry7 = tk.Entry(frame_ipt1, width=12)
+    entry7 = tk.Entry(frame_ipt1, width=12, state="disabled")
     entry7.pack(side="left", padx=5)
 
     # >> 이메일
@@ -105,7 +105,7 @@ def main():
     frame_ipt2.pack(side="top", anchor="nw", pady=5)
     label8 = tk.Label(frame_ipt2, text="이메일", width=6)
     label8.pack(side="left", anchor="w")
-    entry8 = tk.Entry(frame_ipt2, width=32)
+    entry8 = tk.Entry(frame_ipt2, width=32, state="disabled")
     entry8.pack(side="left")
 
     # >> 학과, 상태
@@ -120,14 +120,14 @@ def main():
     result = db.cursor.fetchall()
     for r in result:
         majors2.append(r[0])
-    combo9 = ttk.Combobox(frame_ipt3, width=12, values=majors2)
+    combo9 = ttk.Combobox(frame_ipt3, width=12, values=majors2, state="disabled")
     combo9.pack(side="left", anchor="w", padx=5)
     combo9.current(0)
     # >> 2. 상태
     label10 = tk.Label(frame_ipt3, text="상태", width=4, anchor="w")
     label10.pack(side="left", padx=5)
     states = ["재학", "졸업", "휴학", "퇴학"]
-    combo10 = ttk.Combobox(frame_ipt3, width=7, values=states)
+    combo10 = ttk.Combobox(frame_ipt3, width=7, values=states, state="disabled")
     combo10.pack(side="left", anchor="w", padx=5)
 
     # 버튼부(아래) : 로그아웃, 메인화면 버튼

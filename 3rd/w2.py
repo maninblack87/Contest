@@ -3,6 +3,7 @@ import tkinter as tk
 import json
 
 from routes import Router
+from auth import Logout
 
 def main():
 
@@ -42,7 +43,7 @@ def main():
     button1.pack(side="top", pady=5, ipady=5)
     button2 = tk.Button(frame_right, width=24, text="암호 변경", command=lambda: Router.run_w4(root))
     button2.pack(side="top", pady=5, ipady=5)
-    button3 = tk.Button(frame_right, width=24, text="로그 아웃")
+    button3 = tk.Button(frame_right, width=24, text="로그 아웃", command=lambda: Logout.logout(root))
     button3.pack(side="top", pady=5, ipady=5)
     button4 = tk.Button(frame_right, width=24, text="종료", command=root.quit)
     button4.pack(side="top", pady=5, ipady=5)
