@@ -1,13 +1,13 @@
 # w3.py
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import json
 
 from sqlite.DBconnection import DBconnection
 from config import DB_FILE
 from auth import Logout
 from routes import Router
-from events import Search, onTreeSelect
+from events import Search, onTreeSelect, onClickAdd
 
 def main():
 
@@ -129,6 +129,7 @@ def main():
     states = ["재학", "졸업", "휴학", "퇴학"]
     combo10 = ttk.Combobox(frame_ipt3, width=7, values=states, state="disabled")
     combo10.pack(side="left", anchor="w", padx=5)
+    combo10.current(0)
 
     # 버튼부(아래) : 로그아웃, 메인화면 버튼
     frame_btn_bottom = tk.Frame(frame_right)
@@ -143,7 +144,7 @@ def main():
     frame_btn_top = tk.Frame(frame_right)
     frame_btn_top.pack(side="bottom", padx=10, pady=10, anchor="nw")
     # 
-    add_btn = ttk.Button(frame_btn_top, width=10, text="추가", state="disabled")
+    add_btn = ttk.Button(frame_btn_top, width=10, text="추가", state="disabled", command=lambda: onClickAdd.on_click_add(entry2, entry3, combo1, entry6, entry7, entry8, combo9, combo10))
     add_btn.pack(side="left", padx=5)
     save_btn = ttk.Button(frame_btn_top, width=10, text="저장", state="disabled")
     save_btn.pack(side="left", padx=5)
@@ -152,6 +153,11 @@ def main():
 
 
     # 해당 프로그램 시작시
+    # >> 로그인 상태가 아닐 경우 해당 창을 즉시 종료
+    if current_user['id'] == "":
+        messagebox.showerror("무계정 상태로 접근에 의한 오류", "로그인 후 접근해주세요")
+        Router.run_w1(root)
+
     # >> 권한에 따라 프로그램 상태 설정
     # >> 1. 권한이 admin이면
     if current_user["role"] == "admin":
