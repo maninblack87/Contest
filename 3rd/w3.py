@@ -7,9 +7,17 @@ from sqlite.DBconnection import DBconnection
 from config import DB_FILE
 from auth import Logout
 from routes import Router
-from events import Search, onTreeSelect, onClickAdd
+from events import Search, onTreeSelect, onClickAdd, onClickSave
 
 def main():
+
+    # ## 내장 함수
+    # 1. 값이 바뀔때마다 호출되는, 삭제 버튼 활성/비활성화 조정
+    def toggle_del_btn(*args):
+        if entry6_var.get().strip() == "":
+            del_btn.config(state="disabled")
+        else:
+            del_btn.config(state="normal")
 
     # 데이터베이스 (미리) 연결
     db = DBconnection(DB_FILE)
@@ -51,7 +59,7 @@ def main():
     entry3 = tk.Entry(frame_top, width=10)
     entry3.pack(side="left", padx=5)
     # 검색 버튼
-    search_btn = tk.Button(frame_top, text="검색", command=lambda: Search.search(combo1.get(), entry2.get(), entry3.get(), tree))
+    search_btn = tk.Button(frame_top, text="검색", command=lambda: Search.search(combo1.get(), entry2.get(), entry3.get(), tree, entry6, entry7, entry8, combo9, combo10))
     search_btn.pack(side="left", ipadx=10, padx=5)
     # 현재 사용자 정보(이름/권한)
     curr_user_info = f"{current_user['name']} / {current_user['role']}"
@@ -93,7 +101,9 @@ def main():
     frame_ipt1.pack(side="top", anchor="nw", pady=5)
     label6 = tk.Label(frame_ipt1, text="학번", anchor="w", width=4)
     label6.pack(side="left", padx=5)
-    entry6 = tk.Entry(frame_ipt1, width=12, state="disabled")
+    entry6_var = tk.StringVar()
+    entry6_var.trace_add("write", toggle_del_btn)
+    entry6 = tk.Entry(frame_ipt1, width=12, state="disabled", textvariable=entry6_var)
     entry6.pack(side="left", padx=5)
     label7 = tk.Label(frame_ipt1, text="이름", width=4, anchor="w")
     label7.pack(side="left", padx=5)
@@ -146,7 +156,7 @@ def main():
     # 
     add_btn = ttk.Button(frame_btn_top, width=10, text="추가", state="disabled", command=lambda: onClickAdd.on_click_add(entry2, entry3, combo1, entry6, entry7, entry8, combo9, combo10))
     add_btn.pack(side="left", padx=5)
-    save_btn = ttk.Button(frame_btn_top, width=10, text="저장", state="disabled")
+    save_btn = ttk.Button(frame_btn_top, width=10, text="저장", state="disabled", command=lambda: onClickSave.on_click_save(tree, entry6, entry7, entry8, combo9, combo10))
     save_btn.pack(side="left", padx=5)
     del_btn = ttk.Button(frame_btn_top, width=10, text="삭제", state="disabled")
     del_btn.pack(side="left", padx=5)
@@ -166,7 +176,7 @@ def main():
 
 
     # << 이벤트 >>
-    tree.bind("<<TreeviewSelect>>", lambda e: onTreeSelect.on_tree_select(tree, entry6, entry7, entry8, combo9, combo10))
+    tree.bind("<<TreeviewSelect>>", lambda e: onTreeSelect.on_tree_select(tree, entry6, entry7, entry8, combo9, combo10, del_btn))
 
 
     # 루트 활성화

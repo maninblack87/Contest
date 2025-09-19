@@ -5,7 +5,7 @@ from tkinter import ttk
 from config import DB_FILE
 from sqlite.DBconnection import DBconnection
 
-def search(major:str, id:str, name:str, tree:ttk.Treeview):
+def search(major:str, id:str, name:str, tree:ttk.Treeview, r_id:tk.Entry, r_name:tk.Entry, r_email:tk.Entry, r_major:ttk.Combobox, r_state:ttk.Combobox):
 
     # 데이터베이스 연결
     db = DBconnection(DB_FILE)
@@ -51,3 +51,25 @@ def search(major:str, id:str, name:str, tree:ttk.Treeview):
     # 5-2. 트리뷰 추가(query결과)
     for row in result:
         tree.insert("", "end", values=(row[0], row[1], row[2], row[3]))
+
+    # 6. 우측 입력창 초기화
+    # 6-1. 학번
+    r_id.config(state="normal")
+    r_id.delete(0, tk.END)
+    r_id.config(state="disabled")
+    # 6-1. 이름
+    r_name.config(state="normal")
+    r_name.delete(0, tk.END)
+    r_name.config(state="disabled")
+    # 6-1. 이메일
+    r_email.config(state="normal")
+    r_email.delete(0, tk.END)
+    r_email.config(state="disabled")
+    # 6-1. 학과
+    r_major.config(state="normal")
+    r_major.current(0)
+    r_major.config(state="disabled")
+    # 6-1. 상태
+    r_state.config(state="normal")
+    r_state.current(0)
+    r_state.config(state="disabled")

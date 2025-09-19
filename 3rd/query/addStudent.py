@@ -12,7 +12,8 @@ def add_student(id:str, name:str, email:str, major:str, state:str):
     query = "insert into 학생정보(학번, 이름, 이메일, 학과, 상태) values (?, ?, ?, ?, ?)"
 
     # 쿼리문 실행
-    db.cursor.execute(query, (id, name, email, major, state))
+    db.cursor.execute(query, (id, name, email, major, state,))
+    db.conn.commit()
 
     # 데이터베이스 연결 종료
     db.close()

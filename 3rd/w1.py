@@ -6,7 +6,7 @@ from auth import Login
 
 def main():
 
-    # 내장 함수
+    # ## 내장 함수
     # 1. 로그인 입력창이 모두 8자씩 입력되면 로그인 버튼이 활성화되는 함수
     def check_entries(*args):
         id = entry1_var.get()

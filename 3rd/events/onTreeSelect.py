@@ -1,11 +1,12 @@
 # events/onTreeSelect.py
 import tkinter as tk
 from tkinter import messagebox, ttk
-from config import DB_FILE
+import json
 
+from config import DB_FILE
 from sqlite.DBconnection import DBconnection
 
-def on_tree_select(tree:ttk.Treeview, id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox):
+def on_tree_select(tree:ttk.Treeview, id:tk.Entry, name:tk.Entry, email:tk.Entry, major:ttk.Combobox, state:ttk.Combobox, del_btn:tk.Button):
 
     # 선택한 (트리)노드 아이디 가져오기
     node = tree.focus()
@@ -36,6 +37,9 @@ def on_tree_select(tree:ttk.Treeview, id:tk.Entry, name:tk.Entry, email:tk.Entry
     db.cursor.execute(query, (values[1],))
     result = db.cursor.fetchone()
 
+    with open("CurrentUser.json", "r", encoding="utf-8") as f:
+        current_user = json.load(f)
+
     # 입력창에 DB로부터 가져온 학생정보를 표시
     # 1. 학번
     id.config(state="normal")
@@ -51,8 +55,25 @@ def on_tree_select(tree:ttk.Treeview, id:tk.Entry, name:tk.Entry, email:tk.Entry
     email.config(state="normal")
     email.delete(0, tk.END)
     email.insert(0, result[2])
-    email.config(state="disabled")
+    if current_user["role"] == "admin":
+        email.config(state="normal")
+    else:
+        email.config(state="disabled")
     # 4. 학과
     major.set(result[3])
+    if current_user["role"] == "admin":
+        major.config(state="normal")
+    else:
+        major.config(state="disabled")
     # 5. 상태
     state.set(result[4])
+    if current_user["role"] == "admin":
+        state.config(state="normal")
+    else:
+        state.config(state="disabled")
+
+    # 삭제 버튼 활성화
+    if current_user["role"] == "admin":
+        del_btn.config(state="normal")
+    else:
+        del_btn.config(state="disabled")
