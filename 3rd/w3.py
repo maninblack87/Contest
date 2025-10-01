@@ -7,7 +7,7 @@ from sqlite.DBconnection import DBconnection
 from config import DB_FILE
 from auth import Logout
 from routes import Router
-from events import Search, onTreeSelect, onClickAdd, onClickSave
+from events import Search, onTreeSelect, onClickAdd, onClickSave, onClickDelete
 
 def main():
 
@@ -158,7 +158,7 @@ def main():
     add_btn.pack(side="left", padx=5)
     save_btn = ttk.Button(frame_btn_top, width=10, text="저장", state="disabled", command=lambda: onClickSave.on_click_save(tree, entry6, entry7, entry8, combo9, combo10))
     save_btn.pack(side="left", padx=5)
-    del_btn = ttk.Button(frame_btn_top, width=10, text="삭제", state="disabled")
+    del_btn = ttk.Button(frame_btn_top, width=10, text="삭제", state="disabled", command=lambda: onClickDelete.on_click_delete(entry6, entry7, entry8, combo9, combo10, tree, del_btn))
     del_btn.pack(side="left", padx=5)
 
 
