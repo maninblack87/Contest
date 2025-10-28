@@ -13,10 +13,6 @@ def main():
     # 저장버튼 조건부 활성화 함수
     def toggle_save_btn(*args):
 
-        print(f"entry1_var.get() = {entry1_var.get()}")
-        print(f"entry2_var.get() = {entry2_var.get()}")
-        print(f"entry3_var.get() = {entry3_var.get()}")
-
         # 1. 길이 조건: 모든 입력창의 길이가 8자 이상이어야 함
         is_enough = (len(entry1_var.get()) >= 8 and 
                      len(entry2_var.get()) >= 8 and 
