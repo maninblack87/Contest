@@ -12,7 +12,7 @@ def main():
 
     if not os.path.exists(DB_FILE):
 
-        # 데이터베이스 및 테이블 생성
+        # (초기: 초기 데이터베이스가 생성 되기전 시점) 데이터베이스 및 테이블 생성
         db = DBconnection(DB_FILE)
         db.execute_sql("sqlite/DBstructure.sql")
         db.close()

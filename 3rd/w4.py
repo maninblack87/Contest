@@ -5,7 +5,7 @@ import json
 from sqlite.DBconnection import DBconnection
 from config import DB_FILE
 from routes import Router
-from events import verifyCurrentLogin
+from events.onClickSave2 import on_click_save2
 
 def main():
 
@@ -53,7 +53,7 @@ def main():
     label1.pack(side="left")
     entry1_var = tk.StringVar()
     entry1_var.trace_add("write", toggle_save_btn)
-    entry1 = tk.Entry(frame1, width=24, show="*")
+    entry1 = tk.Entry(frame1, width=24, show="*", textvariable=entry1_var)
     entry1.pack(side="left")
 
     # 새 암호 입력
@@ -63,7 +63,7 @@ def main():
     label2.pack(side="left")
     entry2_var = tk.StringVar()
     entry2_var.trace_add("write", toggle_save_btn)
-    entry2 = tk.Entry(frame2, width=24, show="*")
+    entry2 = tk.Entry(frame2, width=24, show="*", textvariable=entry2_var)
     entry2.pack(side="left")
 
     # 새 암호 확인
@@ -73,13 +73,13 @@ def main():
     label3.pack(side="left")
     entry3_var = tk.StringVar()
     entry3_var.trace_add("write", toggle_save_btn)
-    entry3 = tk.Entry(frame3, width=24, show="*")
+    entry3 = tk.Entry(frame3, width=24, show="*", textvariable=entry3_var)
     entry3.pack(side="left")
 
     # 저장+취소 버튼
     frame_btn = tk.Frame(root)
     frame_btn.pack(side="bottom")
-    button1 = tk.Button(frame_btn, text="저장", width=5, height=1, state="disabled", command=lambda: verifyCurrentLogin.verify_current_login(entry1_var.get()))
+    button1 = tk.Button(frame_btn, text="저장", width=5, height=1, state="disabled", command=lambda: on_click_save2(entry1, entry2, entry3))
     button1.pack(side="left")
     button2 = tk.Button(frame_btn, text="취소", width=5, height=1, command=lambda: Router.run_w2(root))
     button2.pack(side="left")
