@@ -15,3 +15,6 @@ def update_user_password(current_id:str, new_pw:str):
     query = "update 업무사용자 set 암호 = ? where 사번 = ?"
     db.cursor.execute(query, (new_pw, current_id, ))
     db.conn.commit()
+
+    # 데이터베이스 연결 종료
+    db.close()
