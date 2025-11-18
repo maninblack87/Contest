@@ -79,7 +79,7 @@ def main():
     # 저장+취소 버튼
     frame_btn = tk.Frame(root)
     frame_btn.pack(side="bottom")
-    button1 = tk.Button(frame_btn, text="저장", width=5, height=1, state="disabled", command=lambda: on_click_save2(entry1, entry2, entry3))
+    button1 = tk.Button(frame_btn, text="저장", width=5, height=1, state="disabled", command=lambda: on_click_save2(entry1, entry2, entry3, root))
     button1.pack(side="left")
     button2 = tk.Button(frame_btn, text="취소", width=5, height=1, command=lambda: Router.run_w2(root))
     button2.pack(side="left")

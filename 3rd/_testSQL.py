@@ -10,7 +10,7 @@ db = DBconnection(DB_FILE)
 db.connect()
 
 # 쿼리
-query = "select * from 업무사용자"  # <<-- 이거만 수정하면 됨~!
+query = "select * from 학생정보"  # <<-- 이거만 수정하면 됨~!
 db.cursor.execute(query)
 result = db.cursor.fetchall()
 db.conn.commit()
