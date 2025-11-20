@@ -6,7 +6,8 @@ from views import viewLogin
 
 def main():
 
-    # 데이터베이스를 초기화한다
+    # >> 앱을 처음 실행할 때 수행할 때 <<
+    # 데이터베이스를 세팅
     db = DBconn("db_file.sqlite")
     db.connect()
 
