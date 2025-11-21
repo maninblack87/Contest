@@ -1,4 +1,4 @@
--- db_init.sql
+-- db/db_set.sql
 
 -- 학생정보
 create table if not exists 학생정보(
