@@ -27,7 +27,7 @@ insert or ignore into 학생정보(학번, 이름, 이메일, 학과, 상태) va
 create table if not exists 학과정보(
     학과코드 text primary key not null,
     명칭 text not null,
-    check (학과코드 like "c___")
+    check (학과코드 glob "c[0-9]*" and length(학과코드) = 4)
 );
 insert or ignore into 학과정보(학과코드, 명칭) values
 ("c001", "정보통신과"),

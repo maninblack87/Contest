@@ -1,7 +1,7 @@
-# db/dbconnection.py
+# db/db_connection.py
 import sqlite3
 
-class DBconnection:
+class db_connection:
 
     def __init__(self, db_file):
         self.db_file = db_file
