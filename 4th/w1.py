@@ -39,7 +39,7 @@ def main():
     label2.pack(side="left")
     entry2_var = tk.StringVar()
     entry2_var.trace_add("write", lambda *args: check_entries(entry1_var, entry2_var, btn_login))
-    entry2 = tk.Entry(frame2, textvariable=entry2_var, validate='key', validatecommand=vcmd)
+    entry2 = tk.Entry(frame2, textvariable=entry2_var, validate='key', validatecommand=vcmd, show="*")
     entry2.pack(side="left")
 
     # 버튼
@@ -52,3 +52,7 @@ def main():
 
     # 창 활성화
     root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
