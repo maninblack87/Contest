@@ -42,13 +42,13 @@ def main():
     # >> 학번
     label2 = tk.Label(frame1, text="학번")
     label2.pack(side="left")
-    entry1 = tk.Entry(frame1)
-    entry1.pack(side="left")
+    entry2 = tk.Entry(frame1)
+    entry2.pack(side="left")
     # >> 이름
     label3 = tk.Label(frame1, text="이름")
     label3.pack(side="left")
-    entry2 = tk.Entry(frame1)
-    entry2.pack(side="left")
+    entry3 = tk.Entry(frame1)
+    entry3.pack(side="left")
     # >> 버튼 : 검색
     button1 = tk.Button(frame1, text="검색")
     button1.pack(side="left")
@@ -75,13 +75,62 @@ def main():
     tree.column("상태", width=100)
     # >> 목록 : 스크롤바 생성
     scrollbar1 = ttk.Scrollbar(frame2, orient="vertical", command=tree.yview)
-    # >> 
-    tree.configure(c)
-    # 
+    tree.configure(yscrollcommand=scrollbar1.set)
+    # >> 목록 배치
+    tree.pack(side="left", fill="both")
+    # >> 스크롤바 생성
+    scrollbar1.pack(side="left", fill="y")
 
     # 프레임 우측
     frame3 = tk.Frame(root, bg="#aaaaff")
     frame3.pack(side="right", fill="both")
+    # >> 프레임 우측 - 첫번째 프레임
+    frame3_1 = tk.Frame(frame3, bg="#ffff00")
+    frame3_1.pack(side="top")
+    label5 = tk.Label(frame3_1, text="학번")
+    label5.pack(side="left")
+    entry5 = tk.Entry(frame3_1)
+    entry5.pack(side="left")
+    label6 = tk.Label(frame3_1, text="이름")
+    label6.pack(side="left")
+    entry6 = tk.Entry(frame3_1)
+    entry6.pack(side="left")
+    # >> 프레임 우측 - 두번째 프레임
+    frame3_2 = tk.Frame(frame3, bg="#ff00ff")
+    frame3_2.pack(side="top")
+    label7 = tk.Label(frame3_2, text="이메일")
+    label7.pack(side="left")
+    entry7 = tk.Entry(frame3_2)
+    entry7.pack(side="left")
+    # >> 프레임 우측 - 세번째 프레임
+    frame3_3 = tk.Frame(frame3, bg="#00ffff")
+    frame3_3.pack(side="top")
+    label8 = tk.Label(frame3_3, text="학과")
+    label8.pack(side="left")
+    # >> >> 콤보박스 : 학과 (※이전 query1의 결과를 활용한다)
+    major2 = []
+    for r in result1:
+        major2.append(r[0])
+    combo8 = ttk.Combobox(frame3_3, values=major2, state="readonly")
+    combo8.pack(side="left")
+    combo8.current(0)
+    label9 = tk.Label(frame3_3, text="상태")
+    label9.pack(side="left")
+    # >> >> 콤보박스
+    states = ["재학", "졸업", "휴학", "퇴학"]
+    combo9 = ttk.Combobox(frame3_3, values=states, state="readonly")
+    combo9.pack(side="left")
+    combo9.current(0)
+
+    # >> 프레임 우측 하단 (버튼 셋)
+    frame3_4 = tk.Frame(frame3)
+    frame3_4.pack(side="bottom")
+    button2 = tk.Button(frame3_4, text="추가")
+    button2.pack(side="left")
+    button3 = tk.Button(frame3_4, text="저장")
+    button3.pack(side="left")
+    button4 = tk.Button(frame3_4, text="삭제")
+    button4.pack(side="left")
 
     # 창 활성화
     root.mainloop()
