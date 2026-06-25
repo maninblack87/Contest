@@ -19,7 +19,7 @@ def main():
     vcmd = (root.register(check_only_numeric), '%S')
 
     # 메인 프레임
-    main = tk.Frame(root, bg="#ffaaaa")
+    main = tk.Frame(root)
     main.pack(fill="both", padx=20, pady=20)
 
     # 위젯 - 사번
