@@ -122,7 +122,15 @@ def main():
     combo9.pack(side="left")
     combo9.current(0)
 
-    # >> 프레임 우측 하단 (버튼 셋)
+    # >> 프레임 우측 하단 (버튼 셋2)
+    frame3_5 = tk.Frame(frame3)
+    frame3_5.pack(side="bottom")
+    button5 = tk.Button(frame3_5, text="로그아웃")
+    button5.pack(side="left")
+    button6 = tk.Button(frame3_5, text="메인화면")
+    button6.pack(side="left")
+
+    # >> 프레임 우측 하단 (버튼 셋1)
     frame3_4 = tk.Frame(frame3)
     frame3_4.pack(side="bottom")
     button2 = tk.Button(frame3_4, text="추가")
